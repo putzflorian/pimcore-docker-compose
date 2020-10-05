@@ -1,0 +1,54 @@
+version: '3.7'
+
+services:
+
+    redis:
+        image: redis:alpine
+        container_name: redis
+        restart: always
+
+    nginx:
+        image: nginx:latest
+        container_name: nginx
+        ports:
+            - "8080:80"
+        volumes:
+            - ./www:/var/www/html
+            - ./nginx-pimcore.conf:/etc/nginx/nginx.conf
+        depends_on:
+            - php-fpm
+        restart: always
+
+    adminer:
+        image: adminer
+        container_name: pimcore-adminer
+        restart: always
+        ports:
+            - 2002:8080
+
+    db:
+        image: mariadb:10.5
+        restart: always
+        container_name: pimcore-mariadb
+        working_dir: /application
+        command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --innodb-file-format=Barracuda, --innodb-large-prefix=1, --innodb-file-per-table=1]
+        volumes:
+             - ./db:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=ROOT
+            - MYSQL_DATABASE=pimcore
+            - MYSQL_USER=pimcore
+            - MYSQL_PASSWORD=pimcore
+
+
+
+    php-fpm:
+        image: pimcore/pimcore:PHP7.4-fpm-buster
+        container_name: php-fpm
+        volumes:
+            - ./www:/var/www/html
+            - ./www.conf:/usr/local/etc/php-fpm.d/www.conf
+            - ./30-pimcore-php.ini:/usr/local/etc/php/conf.d/30-pimcore-php.ini
+        ports:
+            - 9000:9000
+        restart: always
