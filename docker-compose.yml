@@ -33,7 +33,7 @@ services:
         working_dir: /application
         command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --innodb-file-format=Barracuda, --innodb-large-prefix=1, --innodb-file-per-table=1]
         volumes:
-             - ./db:/var/lib/mysql
+             - pimcore-database:/var/lib/mysql
         environment:
             - MYSQL_ROOT_PASSWORD=ROOT
             - MYSQL_DATABASE=pimcore
@@ -52,3 +52,6 @@ services:
         ports:
             - 9000:9000
         restart: always
+        
+volumes:
+        pimcore-database:
