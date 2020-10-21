@@ -1,0 +1,4 @@
+*/5 * * * * /usr/local/bin/php /var/www/html/bin/console pimcore:maintenance
+*/15 * * * * /usr/local/bin/php /var/www/html/bin/console awesome:command
+#* * * * * /usr/local/bin/php /var/www/html/bin/console process-manager:maintenance  >> /opt/cron.log 2>&1
+
