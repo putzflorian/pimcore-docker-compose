@@ -1,7 +1,22 @@
 version: '3.7'
 
 services:
+    cron-php:
+        container_name: cron-php
+        build: ./cron-php
+        restart: always
+        volumes:
+            - ./www:/var/www/html
+#        command: bash -c "/usr/bin/crontab /etc/crontab && /usr/sbin/cron -f"
 
+    cron:
+#        image: putzflorian/pimcore-maintenance:7.4-fpm
+        build: ./cron-app
+        container_name: cron
+#        restart: always
+        volumes:
+            - ./www:/var/www/html
+            - ./backups/mysql:/var/backups/mysql
     redis:
         image: redis:alpine
         container_name: redis
@@ -26,12 +41,13 @@ services:
         ports:
             - 2002:8080
 
+
     db:
         image: mariadb:10.5
         restart: always
         container_name: pimcore-mariadb
         working_dir: /application
-        command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --innodb-file-format=Barracuda, --innodb-large-prefix=1, --innodb-file-per-table=1]
+        command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --innodb-file-format=Barracuda, --inn$
         volumes:
              - pimcore-database:/var/lib/mysql
         environment:
@@ -52,6 +68,6 @@ services:
         ports:
             - 9000:9000
         restart: always
-        
+
 volumes:
         pimcore-database:
